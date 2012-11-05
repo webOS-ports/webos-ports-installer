@@ -1,0 +1,20 @@
+#!/bin/sh
+TARGET_DIR=/sdcard/media/linux/rootfs
+DISTRO_ARCHIVE=/sdcard/media/linux/webos-dev-image.tar.gz
+
+if [ -d ${TARGET_DIR} ] ; then
+    echo "INFO: Open  webOS was already installed; removing old installation ..."
+    rm -rf ${TARGET_DIR}
+fi
+
+if [ ! -e ${DISTRO_ARCHIVE} ] ; then
+    echo "ERROR: Distro archive ${DISTRO_ARCHIVE} is not available. Aborting!"
+    exit 1
+fi
+
+mkdir -p ${TARGET_DIR}
+echo "INFO: Extracting ${DISTRO_ARCHIVE} archive ..."
+tar xzf ${DISTRO_ARCHIVE} -C ${TARGET_DIR} || exit 1
+echo "INFO: Removing ${DISTRO_ARCHIVE} ..."
+rm ${DISTRO_ARCHIVE}
+echo "INFO: Finished!"
