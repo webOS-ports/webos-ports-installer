@@ -1,6 +1,6 @@
 #!/bin/sh
 TARGET_DIR=/sdcard/media/linux/rootfs
-DISTRO_ARCHIVE=/sdcard/media/linux/webos-dev-image.tar.gz
+DISTRO_ARCHIVE=/sdcard/media/linux/rootfs.tar.gz
 
 if [ -d ${TARGET_DIR} ] ; then
     echo "INFO: Open  webOS was already installed; removing old installation ..."
