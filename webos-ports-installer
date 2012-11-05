@@ -1,0 +1,67 @@
+#!/bin/sh
+
+KERNEL_IMAGE_NAME=zImage-tuna.fastboot
+ROOTFS_IMAGE_NAME=webos-dev-image-tuna.tar.gz
+
+die() {
+    echo "ERROR: $1"
+    exit 1
+}
+
+info() {
+    echo "INFO: $1"
+}
+
+warning() {
+    echo "WARNING: $1"
+}
+
+# FIXME download rootfs and kernel images
+
+# Check for adb and fastboot
+if [ ! `which adb` ] ; then
+    die "adb utility is not available"
+fi
+
+if [ ! `which fastboot` ] ; then
+    die "fastboot utility is not available"
+fi
+
+info "Wait for device to connect ..."
+adb wait-for-device
+info "Device successfully connected"
+
+info "Checking for already installed openwebos on the device ..."
+if [ ! `adb shell test /storage/sdcard0/linux/rootfs` ] ; then
+    info "Open webOS is already installed on the device, should we continue with the installation? [Y/n]:"
+    read answer
+    if [ ! $answer = "Y" ] ; then
+        info "Aborting ..."
+        exit 1
+    fi
+fi
+
+info "Transfering rootfs archive to device ..."
+adb push $ROOTFS_IMAGE_NAME /storage/sdcard0/linux/rootfs.tar.gz
+info "Transfering installer to device ..."
+adb push scripts/installer /storage/sdcard0/linux/installer
+
+info "All necessary files were transferred to the device and the device has to be restarted now to continue"
+# FIXME maybe ask the user to confirm here?
+
+info "Restarting device and booting into bootloader ..."
+adb reboot bootloader
+
+while [ "`fastboot devices`" = "" ] ; do
+    sleep 3
+    warning "Device not yet in fastboot mode ..."
+done
+
+info "Flashing kernel to recovery partition ..."
+fastboot flash recovery $KERNEL_IMAGE_NAME
+info "Booting kernel to finish the installation process ..."
+fastboot boot $KERNEL_IMAGE_NAME
+
+info "The device is now booting directly into Open webOS and will finish the installation process."
+info "You don't have to do anything more now just watching your device booting Open webOS!"
+info "Have fun!"
