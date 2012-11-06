@@ -16,7 +16,18 @@ warning() {
     echo "WARNING: $1"
 }
 
-# FIXME download rootfs and kernel images
+mkdir -p downloads
+
+if [ -e downloads/$ROOTFS_IMAGE_NAME ] ; then
+    rm downloads/$ROOTFS_IMAGE_NAME
+fi
+
+if [ -e downloads/$KERNEL_IMAGE_NAME ] ; then
+    rm downloads/$KERNEL_IMAGE_NAME
+fi
+
+wget http://build.webos-ports.org/webos-ports/images/tuna/$ROOTFS_IMAGE_NAME -O downloads/$ROOTFS_IMAGE_NAME
+wget http://build.webos-ports.org/webos-ports/images/tuna/$KERNEL_IMAGE_NAME -O downloads/$KERNEL_IMAGE_NAME
 
 # Check for adb and fastboot
 if [ ! `which adb` ] ; then
@@ -42,7 +53,7 @@ if [ ! `adb shell test /storage/sdcard0/linux/rootfs` ] ; then
 fi
 
 info "Transfering rootfs archive to device ..."
-adb push $ROOTFS_IMAGE_NAME /storage/sdcard0/linux/rootfs.tar.gz
+adb push downloads/$ROOTFS_IMAGE_NAME /storage/sdcard0/linux/rootfs.tar.gz
 info "Transfering installer to device ..."
 adb push scripts/installer /storage/sdcard0/linux/installer
 
@@ -58,9 +69,9 @@ while [ "`fastboot devices`" = "" ] ; do
 done
 
 info "Flashing kernel to recovery partition ..."
-fastboot flash recovery $KERNEL_IMAGE_NAME
+fastboot flash recovery downloads/$KERNEL_IMAGE_NAME
 info "Booting kernel to finish the installation process ..."
-fastboot boot $KERNEL_IMAGE_NAME
+fastboot boot downloads/$KERNEL_IMAGE_NAME
 
 info "The device is now booting directly into Open webOS and will finish the installation process."
 info "You don't have to do anything more now just watching your device booting Open webOS!"
