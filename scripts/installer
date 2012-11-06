@@ -3,18 +3,18 @@ TARGET_DIR=/sdcard/media/linux/rootfs
 DISTRO_ARCHIVE=/sdcard/media/linux/rootfs.tar.gz
 
 if [ -d ${TARGET_DIR} ] ; then
-    echo "INFO: Open  webOS was already installed; removing old installation ..."
+    echo "INFO: Open  webOS was already installed; removing old installation ..." > /dev/ttyprintk
     rm -rf ${TARGET_DIR}
 fi
 
 if [ ! -e ${DISTRO_ARCHIVE} ] ; then
-    echo "ERROR: Distro archive ${DISTRO_ARCHIVE} is not available. Aborting!"
+    echo "ERROR: Distro archive ${DISTRO_ARCHIVE} is not available. Aborting!" > /dev/ttyprintk
     exit 1
 fi
 
 mkdir -p ${TARGET_DIR}
-echo "INFO: Extracting ${DISTRO_ARCHIVE} archive ..."
+echo "INFO: Extracting ${DISTRO_ARCHIVE} archive ..." > /dev/ttyprintk
 tar xzf ${DISTRO_ARCHIVE} -C ${TARGET_DIR} || exit 1
-echo "INFO: Removing ${DISTRO_ARCHIVE} ..."
+echo "INFO: Removing ${DISTRO_ARCHIVE} ..." > /dev/ttyprintk
 rm ${DISTRO_ARCHIVE}
-echo "INFO: Finished!"
+echo "INFO: Finished!" > /dev/ttyprintk
