@@ -53,6 +53,7 @@ if [ ! `adb shell test /storage/sdcard0/linux/rootfs` ] ; then
 fi
 
 info "Transfering rootfs archive to device ..."
+adb shell mkdir /storage/sdcard0/linux
 adb push downloads/$ROOTFS_IMAGE_NAME /storage/sdcard0/linux/rootfs.tar.gz
 info "Transfering installer to device ..."
 adb push scripts/installer /storage/sdcard0/linux/installer
